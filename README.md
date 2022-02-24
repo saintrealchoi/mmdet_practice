@@ -46,6 +46,9 @@ Just prepare for Inference
 
 
 
+![test](https://user-images.githubusercontent.com/45679609/155476759-07e6687b-0fc8-4826-b298-001f3fa9e018.jpg)
+
+
 and
 
 
@@ -82,5 +85,8 @@ model.show_result(img, result, out_file='result.jpg')
 
 then you can have `result.jpg`
 
+
+
+![result](https://user-images.githubusercontent.com/45679609/155476799-ea0078f7-7df6-44a4-9a27-f4aeb31b3b8d.jpg)
 
 
