@@ -240,7 +240,7 @@ model = dict(
         loss_bbox=dict(type='L1Loss', # reg branch의 cfg로 IoU, Smooth L1등 지원
                        loss_weight=1.0)), # reg branch의 loss가중치
     # ------------------------------ [ROI head] ------------------------------ #
-    roi_head=dict(
+roi_head=dict(
         type='StandardRoIHead', # ROI 헤드의 종류
         bbox_roi_extractor=dict(
             type='SingleRoIExtractor', # ROI feature extractor로 대부분 SingleRoIExtractor사용
@@ -267,29 +267,29 @@ model = dict(
  	# ============================== [Train] ============================== #
     train_cfg=dict(
         rpn=dict(
-            assigner=dict(
-                type='MaxIoUAssigner',
-                pos_iou_thr=0.7,
-                neg_iou_thr=0.3,
-                min_pos_iou=0.3,
-                match_low_quality=True,
-                ignore_iof_thr=-1),
-            sampler=dict(
-                type='RandomSampler',
-                num=256,
-                pos_fraction=0.5,
-                neg_pos_ub=-1,
-                add_gt_as_proposals=False),
-            allowed_border=-1,
-            pos_weight=-1,
-            debug=False),
+            assigner=dict( # assigner란 각각의 bbox를 gt 나 bg에 할당하는 역할
+                type='MaxIoUAssigner', # 가장 많이쓰는 타입
+                pos_iou_thr=0.7, # 0.7보다 높을 경우 positive로 할당
+                neg_iou_thr=0.3, # 0.3보다 낮을 경우 negative로 할당
+                min_pos_iou=0.3, # positive 중 pos_iou_thr보다 낮은 경우가 4th step때 생길 수 있어 최소값설정
+                match_low_quality=True, # 한 BBOX가 여러개의 cls에 높은 score를 가질 때, 낮은 score에도 할당하는 옵션
+                ignore_iof_thr=-1), # Iof threshold로 https://github.com/open-mmlab/mmdetection/issues/393#issuecomment-472282509해당 링크에서 의미 확인
+            sampler=dict( # sampler란 위의 할당된 bbox들을 sample로 만드는 과정
+                type='RandomSampler', # random하게 sample을 뽑는 method
+                num=256, # sample의 개수
+                pos_fraction=0.5, # positive의 비율
+                neg_pos_ub=-1, # sample들의 상한선(upper bound)로 default = 0
+                add_gt_as_proposals=False), # gt를 proposal로 추가할지여부 default = True
+            allowed_border=-1, # anchor의 경계를 허용시키는 값으로 0보다 큰값일 경우 anchor에 더해짐. -1은 모두 valid.default=0
+            pos_weight=-1, # positive sample에 대한 가중치
+            debug=False), # debug모드 설정
         rpn_proposal=dict(
-            nms_pre=2000,
-            max_per_img=1000,
-            nms=dict(type='nms', iou_threshold=0.7),
-            min_bbox_size=0),
-        rcnn=dict(
-            assigner=dict(
+            nms_pre=2000, # NMS 전의 bbox개수
+            max_per_img=1000, # NMS 이후의 최대 bbox 개수
+            nms=dict(type='nms', iou_threshold=0.7), # NMS type
+            min_bbox_size=0), # 최소 크기 설정
+        rcnn=dict( # roi head
+            assigner=dict( #위의 rpn과 동일
                 type='MaxIoUAssigner',
                 pos_iou_thr=0.5,
                 neg_iou_thr=0.5,
@@ -305,7 +305,7 @@ model = dict(
             pos_weight=-1,
             debug=False)),
     # ============================== [Test] ============================== #
-    test_cfg=dict(
+    test_cfg=dict( # train과 동일
         rpn=dict(
             nms_pre=1000,
             max_per_img=1000,
@@ -328,6 +328,8 @@ model = dict(
 
 
 따라서, 해당 module의 세부사항을 알기 위해서는 `type`에 적힌 module을 모두 살펴보아야합니다.
+
+[mmdet docs](https://mmdetection.readthedocs.io/en/latest/index.html)
 
 
 
